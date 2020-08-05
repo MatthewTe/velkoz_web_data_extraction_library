@@ -40,8 +40,8 @@ class BaseWebResponse(object):
     def __init__(self, url, **kwargs):
 
         # Declaring all _private instance variables:
-        self._url = url
         self._kwargs = kwargs
+        self._url = url
         self._initialized_time = time.time()
 
         # HTTP requests.Response object.
@@ -70,7 +70,8 @@ class BaseWebResponse(object):
 
             # Try-Catch for the 'params' kwarg mainly to assert dictionary type:
             try:
-                respone_obj = requests.get(self._url, params=kwargs['params'])
+
+                respone_obj = requests.get(self._url, params=self.kwargs['params'])
                 return respone_obj
 
             except (AttributeError, TypeError):
