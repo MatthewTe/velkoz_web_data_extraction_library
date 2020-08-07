@@ -4,22 +4,21 @@ from bs4 import BeautifulSoup
 import pandas as pd
 
 # Importing base web objects:
-from base_objects import BaseWebResponse
+from base_objects import BaseWebPageResponse, BaseWebPageIngestionEngine
 
-# TODO: Add Logging to the EDGARResultsPage method.
+# TODO: Add Logging to the EDGARResultsPageResponse method.
 # TODO: Add Documentation.
-# TODO: Create Object that processes the HTML pdf objects
 
-class EDGARResultsPage(BaseWebResponse):
+class EDGARResultsPageResponse(BaseWebPageResponse):
     """
-    This is a class that inherits from the BaseWebResponse object and represents
+    This is a class that inherits from the BaseWebPageResponse object and represents
     the results of the SEC's EDGAR response page.
 
     It contains all of the internal methods for extracting relevant data from
     the EDGAR Search Results page of a specific ticker url. The url used to
     initialize the object can be input directly or built using an external
     CIK# to url API. The Attributes listed below are the additional attributes
-    that are added to the Base class BaseWebResponse.
+    that are added to the Base class BaseWebPageResponse.
 
     Attributes:
         _addr_business (str): A string representing the Business Address of the
@@ -30,6 +29,15 @@ class EDGARResultsPage(BaseWebResponse):
             company extracted from the BeautifulSoup object via the
             __extract_address() method.
 
+        _reports_tbl (pandas dataframe): A dataframe containing all the contents
+            that were extracted from the main search results table on the EDGAR
+            company reports page. The dataframe contains the following columns:
+
+            ---------------------------------------------------------------------------------------------------------
+            |filing|filing_description|filing_date|file_id|report_contents_html|report_contents_txt|report_data_href|
+            |------------------------------------------------------------------|-------------------|----------------|
+            |  str |        str       |     str   |  str  |BeautifulSoup Object|         str       |       str      |
+            ---------------------------------------------------------------------------------------------------------
 
     """
 
@@ -118,7 +126,7 @@ class EDGARResultsPage(BaseWebResponse):
             row_lst = []
 
             # Building a list of lists for each row in the table [[row_1],... [row_n]]
-            # where each row = [cell_1, cell_2, cell_3, cell_4, cell_5]:
+            # where each row = [cell_1, cell_2, cell_3, cell_4, str(cell_4), cell_5]:
             for table_row in tbl_row_lst:
 
                 # Extracing all cells for each row:
@@ -135,7 +143,10 @@ class EDGARResultsPage(BaseWebResponse):
 
                 # Extracting the data from the 'Format' cell:
                 format_doc = self.__extract_report_html(
-                    table_cells[1].find('a', id='documentsbutton')['href'])
+                    table_cells[1].find('a', id='documentsbutton')['href']) or 'NaN'
+
+                # Attempting to extract only text from format_doc bs4 object:
+                format_doc_txt = format_doc.get_text('/n') or 'NaN'
 
                 # try-catch to get around ['href'] breaking 'or NaN' convention:
                 try:
@@ -152,6 +163,7 @@ class EDGARResultsPage(BaseWebResponse):
                     filing_date, # The date the report was filed
                     file_num, # The SEC internal file number for the report
                     format_doc, # The full HTML contents of the report.
+                    format_doc_txt, # The textual content of the report.
                     format_data_interactive # The link to the tabular data of the report
                     ]
 
@@ -160,8 +172,8 @@ class EDGARResultsPage(BaseWebResponse):
 
             # Converting the list of rows into a pandas dataframe:
             report_df = pd.DataFrame(row_lst, columns=[
-                'Filing', 'Filing Description', 'Filing Date', 'File ID',
-                'Report Contents', 'Report Data'])
+                'filing', 'filing_description', 'filing_date', 'file_id',
+                'report_contents_html', 'report_contents_txt', 'report_data_href'])
 
             return report_df
 
@@ -204,23 +216,28 @@ class EDGARResultsPage(BaseWebResponse):
         # Extracting the .htm href from the Document format table. Row=2, Col=3:
         table_rows = doc_format_table.find_all('tr')
 
-        # TODO: Use the headers of the tables: table_rows[0] for validation.
+        # Converting table header to list of strings for validation:
+        table_header = [header.text for header in table_rows[0].find_all('th')]
 
-        # Extracting the href from the second cell of Row 2 of the table:
-        document_url = 'https://www.sec.gov' + table_rows[1].find('a')['href']
+        # Using the headers of the tables: table_rows[0] for validation:
+        if table_header == ['Seq', 'Description', 'Document', 'Type', 'Size']:
 
-        # Dropping the '/ix?doc=' from the href if it is there so that only HTML
-        # content is returned:
-        if '/ix?doc=' in document_url:
-            document_url = document_url.replace('/ix?doc=', '')
+            # Extracting the href from the second cell of Row 2 of the table:
+            document_url = 'https://www.sec.gov' + table_rows[1].find('a')['href']
 
-        # Performing a GET request for the full report in HTML:
-        report_response = requests.get(document_url)
+            # Dropping the '/ix?doc=' from the href if it is there so that only HTML
+            # content is returned:
+            if '/ix?doc=' in document_url:
+                document_url = document_url.replace('/ix?doc=', '')
 
-        print(report_response)
+            # Performing a GET request for the full report in HTML:
+            report_response = requests.get(document_url)
 
-        # returning the bs4 object of the HTTP response's content:
-        return BeautifulSoup(report_response.content, 'html.parser')
+            # returning the bs4 object of the HTTP response's content:
+            return BeautifulSoup(report_response.content, 'html.parser')
+
+        else:
+            raise AssertionError('The Table Header for Document Format Files Failed. The Layout May have changed')
 
     def __extract_report_csv(self, report_csv_href):
         '''
@@ -255,5 +272,29 @@ class EDGARResultsPage(BaseWebResponse):
         # Creating and returning the download url for the .xlsx file:
         return 'https://www.sec.gov' + xlsx_href
 
+
+class EDGARPageIngestionEngine(BaseWebPageIngestionEngine):
+    """
+    The EDGARPageIngestionEngine object is the object used to connect the raw
+    data extracted via instances of the EDGARResultsPageResponse() object to a database.
+
+    The ingestion engine performs data transformation on the parameters of an
+    EDGARResultsPageResponse() object and writes said formatted data to a backed database
+    via the SQLAlchemy ORM. When this object is initialized its instance variables
+    contain metadata on the database tables that it has accessed/created. The
+    actual writing to the database is done by calling an internal writing method.
+    # TODO: Once Method is written describe it.
+
+    The ingestion engine is designed to ingest multiple instances of the EDGARResultsPageResponse()
+    object through the *args parameter and as such the method that performs the data
+    ingestion iterates through the list of *argments and performs the specific
+    writing operation for each instance of EDGARResultsPageResponse().
+
+    Attributes:
+        # TODO: Add attributes
+
+    """
+    pass
+
 # Test:
-# test = EDGARResultsPage('https://www.sec.gov/cgi-bin/browse-edgar', params={'CIK':'0000320193'})
+# test = EDGARResultsPageResponse('https://www.sec.gov/cgi-bin/browse-edgar', params={'CIK':'0000320193'})
