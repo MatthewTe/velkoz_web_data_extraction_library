@@ -56,8 +56,6 @@ class BaseWebPageIngestionEngine(object):
     References:
         * https://hackersandslackers.com/python-database-management-sqlalchemy
 
-    Todo:
-        * Add 'Insert' method to add WebPageResponseObjs to Que
     """
 
     def __init__(self, db_uri, *WebPageResponseObjs):
@@ -195,7 +193,7 @@ class BaseWebPageIngestionEngine(object):
 
         else:
             raise ValueError(f"Object {web_object} Was Not Added to Session")
-            
+
 
     def _validate_args(self):
         '''

@@ -42,9 +42,6 @@ class BaseWebPageResponse(object):
             all the nested HTML objects returned by the HTTP GET request. This
             contains all of the HTML content of the webpage.
 
-    Todo:
-        * Implement Custom Logging at key elements of the scraper and all subsequent
-            childern: BaseWebPageResponse(), EDGARResultsPageResponse()
     """
 
     def __init__(self, url, **kwargs):
