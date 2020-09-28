@@ -4,6 +4,7 @@ import time
 # Importing thrid party packages:
 import requests
 from bs4 import BeautifulSoup
+import datetime
 
 class BaseWebPageResponse(object):
     """
@@ -18,9 +19,16 @@ class BaseWebPageResponse(object):
     library.
 
     Attributes:
+
+        _name (str): The string that is used to identify the web object. This string
+            is used to identify the tablename associated with writing the WebObject
+            to a database via the __repr__ method.
+
         _url (str): The url of the webpage to be accessed with requests.get
 
-        _initialized_time (float): The Unix timestamp when the object was initialized
+        _initialized_time (float): The python timestamp when the object was
+            initialized. It is created at the instance the WebObject is initialized
+            via datetime.datetime.now()
 
         _kwargs (dictionary): Optional arguments that modify functionality of
             various methods within the object as well future-proofing further
@@ -44,13 +52,13 @@ class BaseWebPageResponse(object):
         # Declaring all _private instance variables:
         self._kwargs = kwargs
         self._url = url
-        self._initialized_time = time.time()
+        self._initialized_time = datetime.datetime.now()
 
         # HTTP requests.Response object.
         self._http_response = self.__perform_get_request()
 
         # BeautifulSoup object for HTML body of response:
-        self._html_body = BeautifulSoup(self._http_response.content, 'html.parser')
+        self._html_body = self._http_response.content
 
     def __perform_get_request(self):
         '''
@@ -84,4 +92,4 @@ class BaseWebPageResponse(object):
             return respone_obj
 
     def __repr__(self):
-        return f'WebObject(url_{self._url}, status_{self._http_response.status_code})'
+        return f'WebObject({self._url}_{self._initialized_time})'

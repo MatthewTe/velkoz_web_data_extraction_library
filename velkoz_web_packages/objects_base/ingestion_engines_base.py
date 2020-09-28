@@ -1,9 +1,15 @@
 # Importing native packages:
 import time
+import warnings
+
+# Importing local packages:
+from velkoz_web_packages.objects_base.web_objects_base import BaseWebPageResponse
+from velkoz_web_packages.objects_base.db_orm_models_base import BaseWebPageResponseModel, Base
 
 # Importing thrid party packages:
-from sqlalchemy import create_engine, MetaData, Column, String, DateTime, Integer
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy import create_engine, MetaData, Column, String, DateTime, Integer, inspect
+from sqlalchemy.orm import sessionmaker, Session, scoped_session
+
 
 class BaseWebPageIngestionEngine(object):
     """
@@ -24,7 +30,7 @@ class BaseWebPageIngestionEngine(object):
         db_uri (str): The string URI for the database to be connected to. It is
             used to initialize the SQLAlchemy database engine.
 
-        *WebPageResponseObjs (list): A list of arguments that are assumed
+        *WebPageResponseObjs (BaseWebPageResponse): Arguments that are assumed
             (and type checked) to be instances of BaseWebPageResponse() objects or
             any object that uses BaseWebPageResponse() as its base.
 
@@ -50,36 +56,91 @@ class BaseWebPageIngestionEngine(object):
     References:
         * https://hackersandslackers.com/python-database-management-sqlalchemy
 
-
     Todo:
-        * Create database connection methods with SQLA.
-        * Write method for default data writing.
-        * Determine if the self._validation_dict should use dict comprehension
-            as opposed to calling function. (Have only one method __get_validation_status().)
-        * Write tests for the Base Ingestion Engine.
+        * Add 'Insert' method to add WebPageResponseObjs to Que
     """
 
     def __init__(self, db_uri, *WebPageResponseObjs):
 
         # Declaring instance variables:
-        self._WebPageResponseObjs = WebPageResponseObjs
+        self._WebPageResponseObjs = list(WebPageResponseObjs)
+
         self._db_uri = db_uri
 
         # Creating the sqlalchemy database engine and binding session to database:
-        self._sqlaengine = create_engine(self._db_uri, echo=True)
+        self._sqlaengine = create_engine(self._db_uri, pool_pre_ping=True, echo=True)
         self._db_session_maker = sessionmaker(bind=self._sqlaengine)
-        self._db_session = Session()
+        self._db_session = scoped_session(self._db_session_maker)
 
+    def _insert_web_obj(self, web_obj):
+        """The method contains the basic logic that allows a Web Object to be added
+        to the que (list) of Web Objects currently in the ingestion engine.
+
+        The method takes the parameter passed into it and validates said object
+        according to the internal __get_validation_status() method. Once the object
+        has been validated internally (if it passes the validation tests) it is
+        then appended to the instance list self._WebPageResponseObjs
+
+        """
+        # Validating the input parameter:
+        validation_status_code = self.__get_validation_status(web_obj)
+
+        # If the input parameter is validated, appending it to the main Web Obj Que:
+        if validation_status_code > 10:
+            self._WebPageResponseObjs.append(web_obj)
+
+        else:
+            raise ValueError("Input Parameters Failed Internal Validation")
+
+    def _purge_web_obj_que(self):
+        """The method purges the list of web objects stored within the Ingestion
+        Engine.
+
+        When the method is called, it modifies the instance of the Web Object List
+        by calling the clear() method on the parameter self._WebPageResponseObjs.
+
+        """
+        # Performing the clear method on the main Web Object Que:
+        self._WebPageResponseObjs.clear()
+
+    def _write_web_objects(self):
+        """The method that writes data from the WebPageResponseObj passed into the
+        ingestion engine using the default ingestion format.
+
+        It first performs validation for the list of base web objects by calling
+        the self._validate_args() method and declares the resulting dict as an
+        instance parameter.
+
+        It iterates through the web objects that have been passed into the ingestion
+        engine and performs data ingestion operations on each web object by calling
+        the __add_session_default_web_obj on each web_object. Once the web object
+        is added to the session, it is removed from the list of WebObjects.
+
+        This allows the list of WebObjects passed into the Ingestion Engine to
+        essentally behave as a Que of WebObjects. Once all web object are sucessfully
+        commited to a database, the que of Web Objects is emptied via the _purge_web_obj_que()
+        method.
+
+        As such, any WebObjects within the que will be removed after this method
+        is called only if their data is sucessfully written to the database.
+
+        """
         # Performing validation/type checking on the *_WebResponseObj arguments:
-        self._validation_dict = self.__validate_args()
+        self._validation_dict = self._validate_args()
 
-    def _default_write(self):
-        '''
-        # TODO: Add Documentation for _default_write() when __default_web_obj_write().
-        '''
-        pass
+        # Iterating through the list of web objects adding them to the db session:
+        for web_object in self._WebPageResponseObjs:
 
-    def __default_web_obj_write(self, web_object):
+            # Adding them to the database session:
+            self.__add_session_web_obj(web_object)
+
+            # Writing the web objects to the database.
+            self._db_session.commit()
+
+        # If all web objects are sucessfully added to the session, purging the que:
+        self._purge_web_obj_que()
+
+    def __add_session_web_obj(self, web_object):
         """The method ingests a web_object, validates said object and adds the
         default data parameters from BaseWebPageResponse() into the database session.
 
@@ -108,41 +169,35 @@ class BaseWebPageIngestionEngine(object):
         References:
             * https://hackersandslackers.com/sqlalchemy-data-models
             * https://docs.sqlalchemy.org/en/13/core/type_basics.html#sqlalchemy.types.PickleType
-        
+
         Args:
             web_object (BaseWebPageResponse): An object containing the parameters
                 to be added to the database session. Is assumed to be an instance
                 of BaseWebPageResponse or object that uses BaseWebPageResponse as
                 parent. It is validated.
 
-        Todo:
-            * Research How to structure a SQLA data model for ingesting BaseWebPageResponse
-                objects.
-
-            * Determine the html content extracted from the BaseWebPageResponse
-                is to be stored as raw html content or as a pickled Soup objects.
-
         """
-        # Validating input of web_object: # NOTE: More Pythonic to try-except instead of isinstance type-checking:
-        try:
+        # Ensuring that the web object has been validated:
+        if self._validation_dict[web_object] > 10:
 
-            # Ensuring that the response code a 200 status code:
-            if  200 <= web_object._http_response.status_code <=300:
+            # Initalizing an instance of the BaseWebPageResponseModel DB model:
+            Base.metadata.create_all(self._sqlaengine)
 
-                # Creating custom table name based on the web_objects __str__ / __repr__ :
-                table_name = web_object.__repr__().lower()
+            # Creating instance of the BaseWebPageResponseModel:
+            web_obj_model_instance = BaseWebPageResponseModel(
+                date = web_object._initialized_time,
+                response_code = web_object._http_response.status_code,
+                url = web_object._url,
+                html_content = web_object._html_body)
 
+            # Adding instance of BaseWebPageResponseModel to the DB session:
+            self._db_session.add(web_obj_model_instance)
 
+        else:
+            raise ValueError(f"Object {web_object} Was Not Added to Session")
+            
 
-
-
-            else:
-                pass
-
-        except:
-            pass
-
-    def __validate_args(self):
+    def _validate_args(self):
         '''
         A method used to collect data on and type check the argumens passed into the
         *_WebPageResponseObjs parameter.
@@ -191,7 +246,6 @@ class BaseWebPageIngestionEngine(object):
             int: The status code generated by the object parameter.
 
         '''
-
         # Conditionals that determine which status codes to return:
         # TODO: Incorporate Switches when more comprehensive validation status are developed:
         if isinstance(obj, BaseWebPageResponse):
