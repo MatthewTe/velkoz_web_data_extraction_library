@@ -11,6 +11,8 @@ Welcome to Velkoz Web Scraping Library's documentation!
    :caption: Contents:
 
    modules
+   velkoz_web_packages
+   velkoz_web_packages.objects_base
 
 Indices and tables
 ==================
