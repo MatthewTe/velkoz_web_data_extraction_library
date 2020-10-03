@@ -1,1 +1,0 @@
-import objects_stock_price
