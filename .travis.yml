@@ -9,4 +9,4 @@ install:
   - pip install -r requirements.txt
 
 # Command to run pytests:
-script: pytest
+script: python setup.py develop && pytest
