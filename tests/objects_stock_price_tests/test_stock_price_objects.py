@@ -9,8 +9,8 @@ import pandas as pd
 import numpy as np
 import datetime
 
-# Importing Local packages for testing:
-from velkoz_web_packages.objects_stock_price.web_objects_stock_price import NASDAQStockPriceResponseObject
+# Importing velkoz web packages for testing:
+from velkoz_data_pipeline.velkoz_web_packages.objects_stock_price.web_objects_stock_price import NASDAQStockPriceResponseObject
 
 
 class NASDAQStockPriceResponseObjectTest(unittest.TestCase):
