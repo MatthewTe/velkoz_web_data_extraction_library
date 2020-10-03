@@ -15,7 +15,7 @@ from velkoz_web_packages.objects_stock_price.web_objects_stock_price import NASD
 
 class NASDAQStockPriceResponseObjectTest(unittest.TestCase):
 
-    def tests_stock_price_object_parent(self):
+    def test_stock_price_object_parent(self):
         """
         The method tests the initalization of the NASDAQStockPriceResponseObject's
         parent object yf.Ticker.
