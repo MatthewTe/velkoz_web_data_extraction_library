@@ -1,17 +1,19 @@
-.. Velkoz Web Scraping Library documentation master file, created by
-   sphinx-quickstart on Mon Sep 28 00:40:37 2020.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
-Welcome to Velkoz Web Scraping Library's documentation!
+The Velkoz Web Scraping Library
 =======================================================
+The Velkoz Web Scraping Library is a python library for performing Extraction Transformation and
+Loading of data from websites. The Velkoz library was fundamentally designed to create and maintain
+databases that serve as the backend for various data dashboards and statistical models. For example,
+this library began as a series of objects and methods that allowed stock price data extracted from Yahoo
+Finance to be written to a database at the end of every trading day via airflow scheduling.
+
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   modules
-
+   introduction
+   library_categories/library_categories
 
 Indices and tables
 ==================

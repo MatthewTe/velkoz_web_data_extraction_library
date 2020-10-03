@@ -1,4 +1,4 @@
-# velkoz Web Data Extraction Library
+# Velkoz Web Data Extraction Library
 A series of APIs for extracting data from various websites either directly through supported API endpoints where possible or through web-scraping where APIs are not available.
 
 ## Table of Contents

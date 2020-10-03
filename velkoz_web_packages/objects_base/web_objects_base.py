@@ -38,9 +38,9 @@ class BaseWebPageResponse(object):
             webpage to which a GET request was sent. This is the result from the
             requests.get object.
 
-        _html_body (BeautifulSoup obj): The root BeautifulSoup object that contains
-            all the nested HTML objects returned by the HTTP GET request. This
-            contains all of the HTML content of the webpage.
+        _html_body (bytes): The object that contains all the nested HTML objects
+            returned by the HTTP GET request. This contains all of the HTML content
+            of the webpage.
 
     """
 
@@ -54,7 +54,7 @@ class BaseWebPageResponse(object):
         # HTTP requests.Response object.
         self._http_response = self.__perform_get_request()
 
-        # BeautifulSoup object for HTML body of response:
+        # HTML body of response:
         self._html_body = self._http_response.content
 
     def __perform_get_request(self):
@@ -64,7 +64,7 @@ class BaseWebPageResponse(object):
         The internal method performs the HTTP GET request to the url specificed
         by the self._url instance variable. It uses the requests.get() method to
         perform said GET request. In addition to the url it also passes in the
-        'params' argument of the main objects **kwargs if present.
+        'params' argument of the main objects kwargs if present.
 
         Returns:
             response_obj: The result of the request.get() method- A requests.Response

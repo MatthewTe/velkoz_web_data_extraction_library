@@ -30,12 +30,12 @@ class BaseWebPageIngestionEngine(object):
         db_uri (str): The string URI for the database to be connected to. It is
             used to initialize the SQLAlchemy database engine.
 
-        *WebPageResponseObjs (BaseWebPageResponse): Arguments that are assumed
+        WebPageResponseObjs (BaseWebPageResponse): Arguments that are assumed
             (and type checked) to be instances of BaseWebPageResponse() objects or
             any object that uses BaseWebPageResponse() as its base.
 
     Attributes:
-            *_WebPageResponseObjs (list): A list of arguments that are assumed (and type
+            _WebPageResponseObjs (list): A list of arguments that are assumed (and type
                 checked) to be instances of BaseWebPageResponse() objects or any object
                 that uses BaseWebPageResponse() as its base.
 
@@ -194,17 +194,16 @@ class BaseWebPageIngestionEngine(object):
         else:
             raise ValueError(f"Object {web_object} Was Not Added to Session")
 
-
     def _validate_args(self):
         '''
         A method used to collect data on and type check the argumens passed into the
-        *_WebPageResponseObjs parameter.
+        _WebPageResponseObjs parameter.
 
-        The method at base ensures that each element passed into the *argument is
+        The method at base ensures that each element passed into the argument is
         either an instance of BaseWebPageResponse or one of its subclasses. It
         iterates through the list of _WebPageResponseObjs and converts each object
         into a status code (in the same manner as an HTTP Response status code)
-        that indicate the validation status of the *_WebPageResponseObjs elements).
+        that indicate the validation status of the _WebPageResponseObjs elements).
         It does this by calling the __get_validation_status() method for each object
         in the list.
 
@@ -215,7 +214,7 @@ class BaseWebPageIngestionEngine(object):
         Returns:
             dict: The dictionary that contains the key-value pairs of
                 {object: object_status_code} generated from the list of arguments
-                passed into *_WebPageResponseObjs.
+                passed into _WebPageResponseObjs.
 
         '''
         # Iterating through the list of _WebPageResponseObjs and determining obj type:
@@ -232,10 +231,9 @@ class BaseWebPageIngestionEngine(object):
 
         The current status codes supported are:
 
-        20 : The object is a direct instance of BaseWebPageResponse object.
-        21 : The object is an instance of a subclass of BaseWebPageResponse object.
-        10 : The object is not an instance of the base or subclass
-            of a BaseWebPageResponse object.
+        * 20 : The object is a direct instance of BaseWebPageResponse object.
+        * 21 : The object is an instance of a subclass of BaseWebPageResponse object.
+        * 10 : The object is not an instance of the base or subclass of a BaseWebPageResponse object.
 
         Args:
             obj (object): The object that is being validated.
