@@ -18,6 +18,14 @@ class BaseWebPageResponse(object):
     the creation of custom web page objects to be used by each web scraper in the
     library.
 
+    Args:
+
+        url (str): The url of the webpage to be accessed with requests.get.
+
+        kwargs (dictionary): Optional arguments that modify functionality of
+            various methods within the object as well future-proofing further
+            development of the Base Class.
+
     Attributes:
 
         _name (str): The string that is used to identify the web object. This string
