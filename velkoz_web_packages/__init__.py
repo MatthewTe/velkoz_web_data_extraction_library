@@ -1,1 +1,1 @@
-from .velkoz_web_packages.objects_stock_price.web_objects_stock_price import NASDAQStockPriceResponseObject
+import objects_stock_price
