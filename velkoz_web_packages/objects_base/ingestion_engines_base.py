@@ -88,7 +88,8 @@ class BaseWebPageIngestionEngine(object):
             self._WebPageResponseObjs.append(web_obj)
 
         else:
-            raise ValueError("Input Parameters Failed Internal Validation")
+            warnings.Warn(f"Input Parameters Failed Internal Validation, Parameter is status code {validation_status_code}. It was added to the list of ingestion objects however this may cause conflicts. Please check input.")
+            self._WebPageResponseObjs.append(web_obj)
 
     def _purge_web_obj_que(self):
         """The method purges the list of web objects stored within the Ingestion
@@ -192,7 +193,7 @@ class BaseWebPageIngestionEngine(object):
             self._db_session.add(web_obj_model_instance)
 
         else:
-            raise ValueError(f"Object {web_object} Was Not Added to Session")
+            raise ValueError(f"Object {web_object} Was Not Added to Session due to Validation Error")
 
     def _validate_args(self):
         '''
