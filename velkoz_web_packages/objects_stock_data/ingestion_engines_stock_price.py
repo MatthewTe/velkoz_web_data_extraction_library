@@ -31,7 +31,7 @@ class StockPriceDataIngestionEngine(BaseWebPageIngestionEngine):
     BaseDataIngestionEngine that are overwritten for functionality are:
 
     * __add_session_web_obj
-    * __get_validation_status
+    * _get_validation_status
 
     Args:
 
@@ -121,7 +121,7 @@ class StockPriceDataIngestionEngine(BaseWebPageIngestionEngine):
         else:
             raise ValueError(f"Object {web_object} Was Not Added to Session due to Validation Error")
 
-    def __get_validation_status(self, obj):
+    def _get_validation_status(self, obj):
         '''
         The validation method is extended from the Base Ingestion Engine to only
         validate WebPageResponse Objects that contain structured time series price
@@ -141,7 +141,7 @@ class StockPriceDataIngestionEngine(BaseWebPageIngestionEngine):
 
         '''
         # Using basic conditional to screen for correct PageResponse Objects:
-        if isinstance(NASDAQStockPriceResponseObject, obj):
+        if isinstance(obj, NASDAQStockPriceResponseObject):
             return 20
 
         else:

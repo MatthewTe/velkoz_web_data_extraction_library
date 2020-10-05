@@ -75,13 +75,13 @@ class BaseWebPageIngestionEngine(object):
         to the que (list) of Web Objects currently in the ingestion engine.
 
         The method takes the parameter passed into it and validates said object
-        according to the internal __get_validation_status() method. Once the object
+        according to the internal _get_validation_status() method. Once the object
         has been validated internally (if it passes the validation tests) it is
         then appended to the instance list self._WebPageResponseObjs
 
         """
         # Validating the input parameter:
-        validation_status_code = self.__get_validation_status(web_obj)
+        validation_status_code = self._get_validation_status(web_obj)
 
         # If the input parameter is validated, appending it to the main Web Obj Que:
         if validation_status_code > 10:
@@ -205,7 +205,7 @@ class BaseWebPageIngestionEngine(object):
         iterates through the list of _WebPageResponseObjs and converts each object
         into a status code (in the same manner as an HTTP Response status code)
         that indicate the validation status of the _WebPageResponseObjs elements).
-        It does this by calling the __get_validation_status() method for each object
+        It does this by calling the _get_validation_status() method for each object
         in the list.
 
         It then builds a dictionary of key-value pairs {object: object_status_code}.
@@ -219,11 +219,11 @@ class BaseWebPageIngestionEngine(object):
 
         '''
         # Iterating through the list of _WebPageResponseObjs and determining obj type:
-        object_type_dict = {obj:self.__get_validation_status(obj) for obj in self._WebPageResponseObjs}
+        object_type_dict = {obj:self._get_validation_status(obj) for obj in self._WebPageResponseObjs}
 
         return object_type_dict
 
-    def __get_validation_status(self, obj):
+    def _get_validation_status(self, obj):
         '''
         The method used to convert an object into a validation status code.
 
