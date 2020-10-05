@@ -141,7 +141,7 @@ class StockPriceDataIngestionEngine(BaseWebPageIngestionEngine):
 
         '''
         # Using basic conditional to screen for correct PageResponse Objects:
-        if isinstance(obj, NASDAQStockPriceResponseObject):
+        if isinstance(NASDAQStockPriceResponseObject, obj):
             return 20
 
         else:
