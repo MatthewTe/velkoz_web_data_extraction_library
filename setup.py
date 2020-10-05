@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-setup(name='velkoz_data_pipeline',
+setup(name='velkoz_web_packages',
       version='0.0.1',
       description='The private testing installation for the Velkoz Data Pipeline Library',
       license='...',
