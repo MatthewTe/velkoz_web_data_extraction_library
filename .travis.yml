@@ -5,8 +5,9 @@ python:
   - "3.8"
 
 # Command to install dependencies:
-install:
+before_install:
   - pip install -r requirements.txt
+  - python setup.py install
 
 # Command to run pytests:
-script: python setup.py develop && pytest
+script: pytest
