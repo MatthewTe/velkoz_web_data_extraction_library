@@ -88,7 +88,7 @@ class BaseWebPageIngestionEngine(object):
             self._WebPageResponseObjs.append(web_obj)
 
         else:
-            warnings.Warn(f"Input Parameters Failed Internal Validation, Parameter is status code {validation_status_code}. It was added to the list of ingestion objects however this may cause conflicts. Please check input.")
+            warnings.warn(f"Input Parameters Failed Internal Validation, Parameter is status code {validation_status_code}. It was added to the list of ingestion objects however this may cause conflicts. Please check input.")
             self._WebPageResponseObjs.append(web_obj)
 
     def _purge_web_obj_que(self):

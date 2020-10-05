@@ -45,28 +45,28 @@ class NASDAQStockPriceResponseObjectTest(unittest.TestCase):
 
         """
         # Type Checking the '_price_history_full' dataframe:
-        self.assertIsInstance(appl._price_history_full, pd.DataFrame)
+        self.assertIsInstance(aapl._price_history_full, pd.DataFrame)
 
         # Declaring the appropriate list of column names for the '_price_history_full' df:
         column_names_lst = sorted(['open', 'high', 'low', 'close', 'volume', 'dividends', 'stock_splits'])
 
         # Testing the column names of the price_history dataframe:
-        self.assertEqual(column_names_lst, sorted(appl._price_history_full.columns))
+        self.assertEqual(column_names_lst, sorted(aapl._price_history_full.columns))
 
         # Type testing the data from each column in the '_price_history_full':
-        self.assertIs(appl._price_history_full.open.dtype, np.dtype('float64'))
-        self.assertIs(appl._price_history_full.high.dtype, np.dtype('float64'))
-        self.assertIs(appl._price_history_full.low.dtype, np.dtype('float64'))
-        self.assertIs(appl._price_history_full.close.dtype, np.dtype('float64'))
-        self.assertIs(appl._price_history_full.volume.dtype, np.dtype('int64'))
-        self.assertIs(appl._price_history_full.dividends.dtype, np.dtype('float64'))
-        self.assertIs(appl._price_history_full.stock_splits.dtype, np.dtype('float64'))
+        self.assertIs(aapl._price_history_full.open.dtype, np.dtype('float64'))
+        self.assertIs(aapl._price_history_full.high.dtype, np.dtype('float64'))
+        self.assertIs(aapl._price_history_full.low.dtype, np.dtype('float64'))
+        self.assertIs(aapl._price_history_full.close.dtype, np.dtype('float64'))
+        self.assertIs(aapl._price_history_full.volume.dtype, np.dtype('int64'))
+        self.assertIs(aapl._price_history_full.dividends.dtype, np.dtype('float64'))
+        self.assertIs(aapl._price_history_full.stock_splits.dtype, np.dtype('float64'))
 
         # Type Testing the Data in the price_history dataframe index:
-        self.assertIsInstance(appl._price_history_full.index, pd.DatetimeIndex)
+        self.assertIsInstance(aapl._price_history_full.index, pd.DatetimeIndex)
 
         # Type testing the '_initialized_time' internal parameter:
-        self.assertIsInstance(appl._initialized_time, datetime.datetime)
+        self.assertIsInstance(aapl._initialized_time, datetime.datetime)
 
 
 class StockPriceDataIngestionEngineTest(unittest.TestCase):
