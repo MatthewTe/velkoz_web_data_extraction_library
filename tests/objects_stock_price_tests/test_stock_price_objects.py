@@ -132,3 +132,33 @@ class StockPriceDataIngestionEngineTest(unittest.TestCase):
         # Objects that should have been validated as incompatable with the Ingestion Engine:
         self.assertEqual(validation_dict[google], 10)
         self.assertEqual(validation_dict[stack_overflow], 10)
+
+    def test_stock_price_ingestion_engine_data_update(self):
+        """
+        This method performs the unit tests for the __add_session_web_obj method.
+
+        This method that is designed to create and update database tables containing
+        the time series stock price data.
+
+        The method tests the Ingestion Engine’s ability to:
+
+        * Create a new table for a ticker if it does not already exist and populate
+            it with the most recent pricing data.
+        """
+        # Creating Ingestion Engine:
+        ingestion_engine = StockPriceDataIngestionEngine("sqlite:///:memory:")
+
+        # Ingesting NASDAQStockPriceResponseObject and writing to database:
+        ingestion_engine._insert_web_obj(aapl)
+
+        # Writing aapl price data to the database:
+        ingestion_engine._write_web_objects()
+
+        # Asserting that the correct data was written to the database:
+        aapl_db_tbl = pd.read_sql_table(
+            'AAPL_price_history',
+            ingestion_engine._sqlaengine,
+            index_col="Date")
+
+        # Using Pandas method to compare extracted df to current price df:
+        self.assertEqual(aapl_db_tbl.equals(aapl._price_history_full), True)

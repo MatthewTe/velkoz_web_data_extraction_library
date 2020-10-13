@@ -72,7 +72,7 @@ class StockPriceDataIngestionEngine(BaseWebPageIngestionEngine):
         # Initalizing the Parent BaseWebPageIngestionEngine object:
         super().__init__(db_uri, *WebPageResponseObjs)
 
-    def __add_session_web_obj(self, web_object):
+    def _add_session_web_obj(self, web_object):
         """
         The method serves to add an ingested WebPageResponse Object to the Ingestion
         Engines’ database session in the appropriate schema.
@@ -115,7 +115,7 @@ class StockPriceDataIngestionEngine(BaseWebPageIngestionEngine):
 
             # Writing the price dataframe to the database:
             price_df.to_sql(
-                price_df_tbl_name, con=self._db_session, if_exists='replace',
+                price_df_tbl_name, con=self._sqlaengine, if_exists='replace',
                 index=True)
 
         else:

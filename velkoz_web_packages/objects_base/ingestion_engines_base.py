@@ -131,7 +131,7 @@ class BaseWebPageIngestionEngine(object):
         for web_object in self._WebPageResponseObjs:
 
             # Adding them to the database session:
-            self.__add_session_web_obj(web_object)
+            self._add_session_web_obj(web_object)
 
             # Writing the web objects to the database.
             self._db_session.commit()
@@ -139,7 +139,7 @@ class BaseWebPageIngestionEngine(object):
         # If all web objects are sucessfully added to the session, purging the que:
         self._purge_web_obj_que()
 
-    def __add_session_web_obj(self, web_object):
+    def _add_session_web_obj(self, web_object):
         """The method ingests a web_object, validates said object and adds the
         default data parameters from BaseWebPageResponse() into the database session.
 
