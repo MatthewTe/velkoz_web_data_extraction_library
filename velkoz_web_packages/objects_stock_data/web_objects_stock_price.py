@@ -34,11 +34,11 @@ class NASDAQStockPriceResponseObject(yf.Ticker):
             is the result of the yf.Ticker.history(period='max') method. Price
             data is stored in the format:
 
-            ---------------------------------------------------------------------------------------
+            +-----------------+-------+-------+-------+-------+--------+-----------+--------------+
             |   date (index)  | open  |  high |  low  | close | volume | dividends | stock_splits |
-            |-----------------|-------|-------|-------|-------|--------|-----------|--------------|
+            +=================+=======+=======+=======+=======+========+===========+==============+
             |    DateTime     | Float | Float | Float | Float |   Int  |   Float   |    Float     |
-            ---------------------------------------------------------------------------------------
+            +-----------------+-------+-------+-------+-------+--------+-----------+--------------+
 
             It should be noted that the yf.Ticker.history() method that generates
             the dataframe has its own dataframe column naming scheme. This schema

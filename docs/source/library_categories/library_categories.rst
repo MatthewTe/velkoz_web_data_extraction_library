@@ -8,4 +8,4 @@ WebPageResponse and Ingestion Engines Objects can be built by extending other, e
    :maxdepth: 2
    :caption: Velkoz Library Categories:
 
-   finance_objects
+   finance_categories/finance_objects
