@@ -4,7 +4,7 @@ import warnings
 
 # Importing Base Ingestion Engine Objects:
 from velkoz_web_packages.objects_base.ingestion_engines_base import BaseWebPageIngestionEngine
-from velkoz_web_packages.objects_stock_data.web_objects_stock_price import NASDAQStockPriceResponseObject
+from velkoz_web_packages.objects_stock_data.objects_stock_price.web_objects_stock_price import NASDAQStockPriceResponseObject
 
 
 # Importing thrid party packages:

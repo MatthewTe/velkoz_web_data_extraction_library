@@ -22,7 +22,7 @@ NASDAQStockPriceResponseObject). The StockPriceResponseObjects contain basic met
 as **initialized time** and, most importantly, the entire time series price data for the
 stock in question is stored in the **_price_history_full** parameter.
 
-.. autoclass:: velkoz_web_packages.objects_stock_data.web_objects_stock_price.NASDAQStockPriceResponseObject
+.. autoclass:: velkoz_web_packages.objects_stock_data.objects_stock_price.web_objects_stock_price.NASDAQStockPriceResponseObject
    :show-inheritance:
    :members:
    :private-members:
@@ -66,7 +66,7 @@ This operation would produce two new tables in a database:
 .. image:: ../../images/ticker_price_history_db_schema_example.png
 
 
-.. autoclass:: velkoz_web_packages.objects_stock_data.ingestion_engines_stock_price.StockPriceDataIngestionEngine
+.. autoclass:: velkoz_web_packages.objects_stock_data.objects_stock_price.ingestion_engines_stock_price.StockPriceDataIngestionEngine
    :show-inheritance:
    :members:
    :private-members:

@@ -10,8 +10,8 @@ import numpy as np
 import datetime
 
 # Importing velkoz web packages for testing:
-from velkoz_web_packages.objects_stock_data.web_objects_stock_price import NASDAQStockPriceResponseObject
-from velkoz_web_packages.objects_stock_data.ingestion_engines_stock_price import StockPriceDataIngestionEngine
+from velkoz_web_packages.objects_stock_data.objects_stock_price.web_objects_stock_price import NASDAQStockPriceResponseObject
+from velkoz_web_packages.objects_stock_data.objects_stock_price.ingestion_engines_stock_price import StockPriceDataIngestionEngine
 from velkoz_web_packages.objects_base.web_objects_base import BaseWebPageResponse
 
 # Declaring several StockPrice Objects for Ingestion Engine Test:

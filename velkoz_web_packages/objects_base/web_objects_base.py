@@ -85,7 +85,7 @@ class BaseWebPageResponse(object):
             # Try-Catch for the 'params' kwarg mainly to assert dictionary type:
             try:
 
-                respone_obj = requests.get(self._url, params=self.kwargs['params'])
+                respone_obj = requests.get(self._url, params=self._kwargs['params'])
                 return respone_obj
 
             except (AttributeError, TypeError):
