@@ -57,12 +57,10 @@ class BaseWebPageIngestionEngine(object):
         * https://hackersandslackers.com/python-database-management-sqlalchemy
 
     """
-
     def __init__(self, db_uri, *WebPageResponseObjs):
 
         # Declaring instance variables:
         self._WebPageResponseObjs = list(WebPageResponseObjs)
-
         self._db_uri = db_uri
 
         # Creating the sqlalchemy database engine and binding session to database:
