@@ -14,7 +14,7 @@ class TickerListCompilerTest(unittest.TestCase):
         """
         # Initializing list compiling methods with relative paths to test static files:
         compiled_ticker_lst = compile_ticker_list(
-            "../static_test_files/static_files_stock_data_test/ticker_list_test_file.csv"
+            "tests/static_test_files/static_files_stock_data_test/ticker_list_test_file.csv"
             )
 
         # Manually declaring ticker list for assertion testing:
