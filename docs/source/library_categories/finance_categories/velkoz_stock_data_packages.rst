@@ -4,8 +4,8 @@ These Packages scrape and ingest mainly quantitative data related to publicly tr
 stocks on various exchanges. These objects are the backbone upon which all Quantitative
 financial analysis on the Velkoz platform is based.
 
-Stock Price Velkoz Objects
-**************************
+Stock Price WebPageResponse Objects
+************************************
 The most basic stock data web objects are the web objects that extract price data.
 In keeping with the standard, prices for stocks listed on each exchange are represented
 by a WebPageResponse Object. All of the exchange specific WebPageResponse Objects are ingested
@@ -28,8 +28,8 @@ stock in question is stored in the **_price_history_full** parameter.
    :private-members:
    :undoc-members:
 
-Stock Price Ingestion Engine
-*****************************
+Stock Price Data Ingestion Engine
+**********************************
 The Ingestion Engine for StockPriceResponseObjects is the StockPriceDataIngestionEngine.
 It, unlike the StockPriceResponse Objects it was designed for, does inherit directly from
 the BaseWebPageIngestionEngine and overwrite the key database writing method **_add_session_web_obj**
@@ -71,3 +71,11 @@ This operation would produce two new tables in a database:
    :members:
    :private-members:
    :undoc-members:
+
+Fund Holdings WebPageResponse Objects
+**************************************
+Placeholder for Fund Holdings WebPageResponse Objects documentation.
+
+Fund Holdings Data Ingestion Engine
+************************************
+Placeholder for Fund Holdings Data Ingestion Engine Object documentation.
