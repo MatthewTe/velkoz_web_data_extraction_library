@@ -74,8 +74,67 @@ This operation would produce two new tables in a database:
 
 Fund Holdings WebPageResponse Objects
 **************************************
-Placeholder for Fund Holdings WebPageResponse Objects documentation.
+The NASDAQFundHoldingsResponseObject is the stock data web object that extracts
+the holdings data for a fund listed on Yahoo Finance.com based on an input ticker
+symbol. It inherits from the BaseWebPageResponse base object and uses the primary
+framework for extracting and parsing web data:
+
+HTTP Request via requests library --> Parsing HTML content via Beautiful
+Soup library  --> Converting Extracted Data to Structured Data in form
+of Pandas Dataframe.
+
+When a fund ticker is used to initialize this WebPageResponse Object it scrapes and
+extracts the following data from Yahoo Finance:
+
+.. image:: ../../images/icln_holdings_example.png
+
+
+.. autoclass:: velkoz_web_packages.objects_stock_data.objects_fund_holdings.web_objects_fund_holdings.NASDAQFundHoldingsResponseObject
+   :show-inheritance:
+   :members:
+   :private-members:
+   :undoc-members:
+
 
 Fund Holdings Data Ingestion Engine
 ************************************
-Placeholder for Fund Holdings Data Ingestion Engine Object documentation.
+The Ingestion Engine for the NASDAQFundHoldingsResponseObject is the FundHoldingsDataIngestionEngine.
+It directly inherits from the BaseWebPageIngestionEngine and overwrites the key
+database writing method _add_session_web_obj to suit the NASDAQFundHoldingsResponseObject
+format. The internal validation of the Ingestion Engine is also overwritten to validate
+only NASDAQFundHoldingsResponseObject and the BaseWebPageIngestionEngine supports all
+NASDAQFundHoldingsResponseObject.
+
+The Ingestion Engine writes price time series data (in a brute force and in-efficient
+way via the pd.to_sql(if_exists=“replace”) method but that is neither here nor there)
+to a database with the following database schema:
+
+.. image:: ../../images/ticker_fund_holdings_db_schema.png
+
+Example of the FundHoldingsDataIngestionEngine populating a database:
+
+.. code-block:: python
+
+  # Example of various NASDAQFundHoldingsResponse Objects to be written to the database:
+  icln = NASDAQFundHoldingsResponseObject('ICLN')
+  qcln = NASDAQFundHoldingsResponseObject('QCLN')
+
+  # Creating the Ingestion Engine:
+  fund_holding_ingestion_engine = FundHoldingsDataIngestionEngine("db_URI")
+
+  # Adding the two NASDAQStockPriceResponseObjects to the Ingestion Engine Que:
+  fund_holding_ingestion_engine._insert_web_obj(icln)
+  fund_holding_ingestion_engine._insert_web_obj(qcln)
+
+  # Writing all objects within the que to the database:
+  fund_holding_ingestion_engine._write_web_objects()
+
+This operation would produce two new tables in the database:
+
+.. image:: ../../images/ticker_fund_holdings_db_schema_example.png
+
+.. autoclass:: velkoz_web_packages.objects_stock_data.objects_fund_holdings.ingestion_engines_fund_holdings.FundHoldingsDataIngestionEngine
+   :show-inheritance:
+   :members:
+   :private-members:
+   :undoc-members:
