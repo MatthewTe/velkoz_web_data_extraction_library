@@ -14,7 +14,7 @@ from sqlalchemy import create_engine, MetaData, Column, String, DateTime, Intege
 from sqlalchemy.orm import sessionmaker, Session, scoped_session
 import yfinance as yf
 
-class NASDAQStockDataSummaryIngestionEngine(BaseWebPageIngestionEngine):
+class StockDataSummaryIngestionEngine(BaseWebPageIngestionEngine):
     """
     # TODO: Paste Google Docs In-Line Documentation
     """
