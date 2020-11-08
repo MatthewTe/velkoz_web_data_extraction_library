@@ -127,7 +127,19 @@ class StockDataSummaryIngestionEngineTest(unittest.TestCase):
 
         # Extracting the several rows of the dataframe to assert the actual values
         # stored within the dataframe:
-        df_slice = stock_data_summary_tbl[:5]
+        df_slice_stocks = stock_data_summary_tbl[:5] # <- Top 5 rows are companies not funds
+        df_slice_funds = stock_data_summary_tbl[-5:] # <- Last 5 rows are funds not companies
 
-        for index, row in df_slice.iterrows():
-            print(row)
+        # Assertion testing for the company rows in the stock_data_summary_tbl:
+        for index, row in df_slice_stocks.iterrows():
+
+            # Stock data should not have a fund holdings table. 'holdings_tbl' == 'NAN':
+            self.assertEqual(row['price_tbl'], f"{index}_price_history")
+            self.assertEqual(row['holdings_tbl'], "NaN")
+
+        # Assertion testing for fund stock rows in the stock_data_summary_tbl:
+        for index, row in df_slice_funds.iterrows():
+
+            # Funds should have both stock price data and holdings data:
+            self.assertEqual(row['price_tbl'], f"{index}_price_history")
+            self.assertEqual(row['holdings_tbl'], f"{index}_holdings_data")
