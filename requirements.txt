@@ -35,3 +35,4 @@ urllib3==1.25.10
 velkoz-web-packages @ git+https://github.com/MatthewTe/velkoz_web_data_extraction_library.git@3bb25763b0c45780a6c3e158ca439e8e3a706f03
 wincertstore==0.2
 yfinance==0.1.54
+html5lib=1.1
