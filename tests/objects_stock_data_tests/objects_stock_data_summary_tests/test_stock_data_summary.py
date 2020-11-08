@@ -64,6 +64,9 @@ class StockDataSummaryIngestionEngineTest(unittest.TestCase):
         * The ability of the Ingestion Engine to correctly update the database tables
             with accurate changes to the database schema (again see documentation).
 
+        Critically the method uses a locally created sqlite database as the
+        StockDataSummaryIngestionEngine requires a persistent database image that
+        an in-memory equivalent does not provide. 
         """
         # Creating the test ingestion engine:
         data_summary_ingestion_engine = StockDataSummaryIngestionEngine("sqlite:///test_db.db")
