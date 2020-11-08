@@ -23,11 +23,24 @@ stock_ticker_lst = ['AAPL', 'XOM', 'MSFT', 'V', 'FSLR', 'TSLA']
 fund_ticker_lst = ['SPY', 'QQQ', 'XLF', 'XLE', 'ICLN']
 
 # Interating through ticker lists creating Response Objects:
-
+stock_response_obj_lst = [NASDAQStockPriceResponseObject(ticker) for ticker in stock_ticker_lst]
+funds_response_obj_lst = [NASDAQFundHoldingsResponseObject(ticker) for ticker in fund_ticker_lst]
 
 class StockDataSummaryIngestionEngineTest(unittest.TestCase):
 
     def test_base_ingestion_engine_initalization(self):
         """
+        The method tests the creation/initialization of the StockDataSummaryIngestionEngine
+        object. The method initializes the Ingestion engine and performs type
+         with the IngestionEngine’s SQLAlchemy objects that are used to connect
+         to the database.
+
         """
-        pass
+        # Initializing the Ingestion Engine with an in-memory database:
+        test_ingestion_engine = StockPriceDataIngestionEngine("sqlite:///:memory:")
+
+        # Performing type checking on all internal SQLAlchemy database conn objects:
+        self.assertIsInstance(ingestion_engine._sqlaengine, sqlalchemy.engine.Engine)
+        self.assertIsInstance(ingestion_engine._db_session_maker, sqlalchemy.orm.session.sessionmaker)
+        self.assertIsInstance(ingestion_engine._db_session, sqlalchemy.orm.scoped_session)
+        
