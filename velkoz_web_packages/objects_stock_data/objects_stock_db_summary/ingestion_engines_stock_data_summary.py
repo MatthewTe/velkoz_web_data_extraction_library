@@ -52,7 +52,7 @@ class StockDataSummaryIngestionEngine(BaseWebPageIngestionEngine):
         # Performing validation/type checking on the *_WebResponseObj arguments:
         self._validation_dict = self._validate_args()
 
-        # Query a list of all table names that exist in the database:
+        # Query a list of all table names that exist in the database from new SQLA engine:
         self._existing_db_tables = set(self._sqlaengine.table_names())
 
         # Iterating through the list of web objects adding them to the db session:
@@ -70,6 +70,10 @@ class StockDataSummaryIngestionEngine(BaseWebPageIngestionEngine):
     def _add_session_web_obj(self, web_object):
         """
         # TODO: Add Documentation.
+
+        References:
+
+            * https://www.tutorialspoint.com/sqlalchemy/sqlalchemy_orm_updating_objects.htm
         """
         # Ensuring that the web object has been validated for ingestion:
         if self._validation_dict[web_object] > 10:
@@ -78,7 +82,12 @@ class StockDataSummaryIngestionEngine(BaseWebPageIngestionEngine):
             Base.metadata.create_all(self._sqlaengine)
 
             # Searching the existing datbase tables for existing stock data tables:
-            ticker_value_dict = self._search_database_table_set(web_obj, self._existing_db_tables)
+            ticker_value_dict = self._search_database_table_set(web_object, self._existing_db_tables)
+
+            # Querying the database for a potential instance of the data model
+            # (database table 'nasdaq_stock_data_summary_tbl' row):
+            existing_ticker_row = self._db_session.query(
+                NASDAQStockDataSummaryModel).filter_by(ticker=web_object).first()
 
             # If the existing row query returns nothing model instance is initialized
             # and to the database session:
@@ -86,19 +95,25 @@ class StockDataSummaryIngestionEngine(BaseWebPageIngestionEngine):
 
                 # Initialize db model:
                 ticker_summary_instance = NASDAQStockDataSummaryModel(
-                    ticker = web_obj,
+                    ticker = web_object,
                     price_tbl = ticker_value_dict['price_tbl'],
                     holdings_tbl = ticker_value_dict['holdings_tbl'],
-                    last_updated = ticker_value_dict['last_updated']
-                    )
+                    last_updated = ticker_value_dict['last_updated'])
 
                 # Adding database model to session:
                 self._db_session.add(ticker_summary_instance)
 
             # If the existing row query exists overwrite its parameters w/ recent info:
-        elif existing_ticker_row != None:
+            else:
+
                 # Updating parameters for existing database model instance:
-                existing_ticker_row.update(ticker_value_dict)
+                existing_ticker_row.price_tbl = ticker_value_dict['price_tbl']
+                existing_ticker_row.holdings_tbl = ticker_value_dict['holdings_tbl']
+                existing_ticker_row.last_updated = ticker_value_dict['last_updated']
+
+                # Adding database model to session:
+                self._db_session.commit()
+
 
     def _search_database_table_set(self, ticker, tbl_set):
         """
