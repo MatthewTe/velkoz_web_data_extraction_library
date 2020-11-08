@@ -22,7 +22,7 @@ class NASDAQStockDataSummaryModel(Base):
 
     price_tbl = Column(
         'price_tbl',
-        String(20)
+        String(20),
         nullable = True)
 
     holdings_tbl = Column(
