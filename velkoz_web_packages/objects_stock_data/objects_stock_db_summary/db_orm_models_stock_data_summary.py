@@ -27,7 +27,7 @@ class NASDAQStockDataSummaryModel(Base):
 
     holdings_tbl = Column(
         'holdings_tbl',
-        String(20)
+        String(20),
         nullable = True)
 
     last_updated = Column(
