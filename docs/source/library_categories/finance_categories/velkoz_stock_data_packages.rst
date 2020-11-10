@@ -138,3 +138,14 @@ This operation would produce two new tables in the database:
    :members:
    :private-members:
    :undoc-members:
+
+
+Stock Data Summary Ingestion Engine
+************************************
+# TODO: Write Data Summary Ingestion Engine Documentation.
+
+.. autoclass:: velkoz_web_packages.objects_stock_data.objects_stock_db_summary.ingestion_engines_stock_data_summary.StockDataSummaryIngestionEngine
+   :show-inheritance:
+   :members:
+   :private-members:
+   :undoc-members:
