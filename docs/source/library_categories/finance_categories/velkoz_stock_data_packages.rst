@@ -142,7 +142,52 @@ This operation would produce two new tables in the database:
 
 Stock Data Summary Ingestion Engine
 ************************************
-# TODO: Write Data Summary Ingestion Engine Documentation.
+This Ingestion Engine is built to be different from all the other stock data ingestion engines.
+This engine serves to write data to the associated database based on the database’s
+Meta-Data about what stock data it contains.
+
+The engine ingests ticker symbol strings (no WebPageResponse Objects) and compiles
+a row of data indicating what data about said stock ticker is found within the database.
+For example if the ticker string “AAPL” is ingested then the following logic is performed
+when the internal writing methods are called:
+
+A list of all table names are extracted from the database --> The database table
+set is searched for the presence of all of the relevant stock data tables associated
+with the ticker “AAPL”. --> A row of the “database summary table” is created with all
+of the names of existing “AAPL” stock data tables. If a table is not found “NaN” is
+written in its place. --> Data Summary table row is written to the database.
+
+Currently the stock data tables that the Ingestion Engine searches for are:
+
+- Ticker Stock Price Time Series data table --> “{ticker}_price_history”
+- Ticker Fund Holdings data table --> “{ticker}_holdings_data”
+
+The Ingestion Engine writes data to the database based on the following schema:
+
+.. image:: ../../images/ticker_data_summary_db_schema.png
+
+Which is described by a SQLAlchemy ORM model described below. In this Ingestion
+Engine data is written to the database via a SQLAlchemy ORM model much in the
+same manner as the BaseIngestionEngine.
+
+.. autoclass:: velkoz_web_packages.objects_stock_data.objects_stock_db_summary.db_orm_models_stock_data_summary.NASDAQStockDataSummaryModel
+   :noindex:
+   :members:
+   :private-members:
+
+Example of the StockDataSummaryIngestionEngine populating a database:
+
+.. code-block:: python
+
+  # Creating the Ingestion Engine:
+  stock_data_summary_engine = StockDataSummaryIngestionEngine("db_URI")
+
+  # Adding ticker symbol rows to the database data summary table:
+  stock_data_summary_engine._insert_web_obj("AAPL")
+  stock_data_summary_engine._insert_web_obj("ICLN")
+
+  # Writing all objects within the que to the database:
+  stock_data_summary_engine._write_web_objects()
 
 .. autoclass:: velkoz_web_packages.objects_stock_data.objects_stock_db_summary.ingestion_engines_stock_data_summary.StockDataSummaryIngestionEngine
    :show-inheritance:
