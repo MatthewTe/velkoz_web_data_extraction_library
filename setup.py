@@ -4,5 +4,5 @@ setup(name='velkoz_web_packages',
       version='0.0.1',
       description='The private testing installation for the Velkoz Data Pipeline Library',
       license='...',
-      packages=find_packages(),
+      packages=['velkoz_web_packages'],
       zip_safe=False)
